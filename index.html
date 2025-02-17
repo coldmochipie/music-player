@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/4a9dcc5714.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="music-player">
+      <nav>
+        <div class="circle">
+          <i class="fa-solid fa-angle-left"></i>
+        </div>
+        <div class="circle">
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      </nav>
+      <img src="images/nj.jpg" alt="song image" class="song-img">
+      <h1 id="song-title">How Sweet</h1>
+      <p id="artist-name">New Jeans</p>
+
+      <audio id="song">
+        <source src="music/How Sweet - NewJeans (Audio) [iR2Uq2LINyU].mp3" id="song-source">
+      </audio>
+      <input type="range" value="0" id="progress">
+
+      <div class="controls">
+        <div onclick="prevSong()"><i class="fa-solid fa-backward"></i></div>
+        <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
+        <div onclick="nextSong()"><i class="fa-solid fa-forward"></i></div>
+      </div>
+
+    </div>
+  </div>
+  
+  <script>
+
+    let progress = document.getElementById('progress');
+    let song = document.getElementById('song');
+    let ctrlIcon = document.getElementById('ctrlIcon');
+    let songImg = document.querySelector('.song-img');
+    let songTitle = document.getElementById('song-title');
+    let artistName = document.getElementById('artist-name');
+    let songSource = document.getElementById('song-source')
+
+    let songs = [
+      {
+        title: 'How Sweet',
+        artist: 'New Jeans',
+        src: 'music/How Sweet - NewJeans (Audio) [iR2Uq2LINyU].mp3',
+        img: 'images/nj.jpg'
+      },
+      {
+        title: 'My Love Mine All Mine',
+        artist: 'Mitski',
+        src: 'music/Mitski - My Love Mine All Mine (Official Lyric Video) [CwGbMYLjIpQ].mp3',
+        img: 'images/mine.jpg'
+      },
+      {
+        title: 'Yakap Sa Dilim',
+        artist: 'Orange & Lemons',
+        src: 'music/Orange & Lemons - Yakap Sa Dilim (Official Lyric Video) [v27At9bBb6Q].mp3',
+        img: 'images/yakap.jpg'
+      },
+      {
+        title: 'St. Chroma',
+        artist: 'Tyler, The Creator ft. Daniel Caesar',
+        src: 'music/Tyler, The Creator - St. Chroma [9RuII0Ej2lk].mp3',
+        img: 'images/chroma.jpg'
+      },
+      {
+        title: 'Timeless',
+        artist: 'The Weeknd ft. Playboi Carti',
+        src: 'music/The Weeknd, Playboi Carti - Timeless (Official Audio) [rVORdn4Xpzk].mp3',
+        img: 'images/timeless.jpg'
+      }
+    ];
+
+    let currentSongIndex = 0;
+
+
+    song.onloadedmetadata = function(){
+      progress.max = song.duration;
+      progress.value = song.currentTime;
+    }
+
+    function playPause() {
+      if (ctrlIcon.classList.contains('fa-pause')){
+        song.pause();
+        ctrlIcon.classList.remove('fa-pause');
+        ctrlIcon.classList.add('fa-play');
+        songImg.style.animationPlayState = 'paused';
+      } else {
+        song.play();
+        ctrlIcon.classList.add('fa-pause');
+        ctrlIcon.classList.remove('fa-play');
+        songImg.style.animationPlayState = 'running';
+      }
+    }
+
+    setInterval(() => {
+      if (!song.paused) {
+        progress.value = song.currentTime;
+      }
+    }, 500);
+
+    progress.onchange = function() {
+      song.play();
+      song.currentTime = progress.value;
+      ctrlIcon.classList.add('fa-pause');
+      ctrlIcon.classList.remove('fa-play');
+      songImg.style.animationPlayState = 'running';
+    }
+
+    function loadSong(index) {
+      let songData = songs[index];
+      songSource.src = songData.src;
+      song.load();
+      songTitle.textContent = songData.title;
+      artistName.textContent = songData.artist;
+      songImg.src = songData.img;
+      playPause();
+      song.play();
+      ctrlIcon.classList.add('fa-pause');
+      ctrlIcon.classList.remove('fa-play');
+      songImg.style.animationPlayState = 'running';
+    }
+
+    function nextSong() {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      loadSong(currentSongIndex);
+    }
+
+    function prevSong() {
+      currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      loadSong(currentSongIndex);
+    }
+
+    song.addEventListener('ended', nextSong);
+
+
+  </script>
+
+
+</body>
+</html>
